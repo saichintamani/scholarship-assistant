@@ -7,7 +7,31 @@ services:
       - "8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_URL=redis://redis:6379/0
     volumes:
       - ./backend/analytics.json:/app/backend/analytics.json
       - ./backend/fraud_logs.json:/app/backend/fraud_logs.json
       - ./backend/scholarships.json:/app/backend/scholarships.json
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery_worker:
+    build: .
+    command: celery -A backend.services.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+
+volumes:
+  sqlite_data:
+  redis_data:

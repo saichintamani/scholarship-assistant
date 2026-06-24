@@ -17,6 +17,7 @@ from backend.ai.logger_agent import LoggerAgent
 from backend.ai.vision_agent import VisionAgent
 from backend.ai.rag_agent import RagAgent
 from backend.scraper import run_automated_scraper
+from backend.routes.scholarships import router as scholarships_router
 
 load_dotenv()
 
@@ -28,6 +29,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include Modular API Routes (FAANG MVC Architecture)
+app.include_router(scholarships_router, prefix="/api/v1/scholarships", tags=["Intelligence Engine"])
 
 # Start Background Scheduler
 scheduler = BackgroundScheduler()
@@ -266,6 +270,4 @@ def delete_scholarship(name: str):
     conn.close()
     return {"message": "Scholarship deleted successfully"}
 
-# Serve frontend directly from FastAPI
-frontend_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
-app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
+# FastAPI now purely acts as the API Gateway for the Next.js Frontend.

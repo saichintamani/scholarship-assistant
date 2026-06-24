@@ -8,3 +8,7 @@ python-jose
 beautifulsoup4
 requests
 apscheduler
+faiss-cpu
+sentence-transformers
+celery
+redis
