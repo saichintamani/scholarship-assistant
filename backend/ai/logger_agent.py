@@ -1,13 +1,10 @@
 import json
 import os
+from backend.db import get_db_connection
 
 class LoggerAgent:
     def __init__(self):
-        self.logs_file = os.path.join(os.path.dirname(__file__), "..", "analytics.json")
-        self.fraud_file = os.path.join(os.path.dirname(__file__), "..", "fraud_logs.json")
-        
-        self.logs = self._load_json(self.logs_file)
-        self.fraud_cases = self._load_json(self.fraud_file)
+        pass
 
     def log_decision(self, data: dict, eligible: bool, explanation: str):
         conn = get_db_connection()
