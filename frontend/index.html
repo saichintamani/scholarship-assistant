@@ -2,27 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SamvaadAI | National Agentic Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SamvaadAI | Scholarship Eligibility</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <div class="background-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
 
-  <div class="container">
-    <div class="glass-card">
-      <div class="header">
-        <h1>🎓 Samvaad<span class="gradient-text">AI</span></h1>
-        <p class="subtitle">National Level Agentic Decision Engine</p>
-      </div>
+  <!-- HERO SECTION -->
+  <section class="hero container">
+    <h1 style="color: var(--primary);">SamvaadAI</h1>
+    <h2>Find Your Perfect Scholarship</h2>
+    <p>Our AI-powered assistant analyzes your profile against national databases to instantly determine your eligibility and guide your application process.</p>
+  </section>
 
+  <!-- FEATURES SECTION -->
+  <section class="container features">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Instant Analysis</h3>
+      <p>Get real-time matching against our verified scholarship database.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <h3>AI Explanations</h3>
+      <p>Understand exactly why you qualify with personalized AI insights.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <h3>Secure Verification</h3>
+      <p>Built-in fraud detection ensures a fair process for all applicants.</p>
+    </div>
+  </section>
+
+  <!-- CTA / FORM SECTION -->
+  <section class="container" style="max-width: 600px; margin-bottom: 80px;">
+    <div class="card">
+      <h3 style="margin-bottom: 24px; text-align: center;">Check Eligibility</h3>
+      
       <div class="form-group">
-        <label>Category</label>
+        <label for="category">Caste Category</label>
         <select id="category">
           <option value="SC">Scheduled Caste (SC)</option>
           <option value="ST">Scheduled Tribe (ST)</option>
@@ -33,33 +51,29 @@
       </div>
 
       <div class="form-group">
-        <label>Annual Income (₹)</label>
-        <input type="number" id="income" placeholder="e.g. 230000" min="0" value="200000">
+        <label for="income">Annual Family Income (₹)</label>
+        <input type="number" id="income" placeholder="e.g. 250000" min="0">
       </div>
 
-      <div class="form-row">
-        <div class="form-group half">
-          <label>Passed Last Exam?</label>
+      <div class="flex-row">
+        <div class="form-group flex-1">
+          <label for="passed">Passed Prev. Exam?</label>
           <select id="passed">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
           </select>
         </div>
-
-        <div class="form-group half">
-          <label>Number of Attempts</label>
-          <input type="number" id="attempts" placeholder="e.g. 1" min="1" value="1">
+        <div class="form-group flex-1">
+          <label for="attempts">Application Attempts</label>
+          <input type="number" id="attempts" value="1" min="1">
         </div>
       </div>
 
-      <button onclick="checkScholarship()" class="action-btn">
-        <span class="btn-text">🚀 Check Eligibility</span>
-        <div class="loader" id="btnLoader"></div>
-      </button>
-
-      <div id="result" class="result-container hidden"></div>
+      <button onclick="checkEligibility()" class="btn btn-primary" id="submit-btn">Check My Eligibility</button>
+      
+      <div id="result"></div>
     </div>
-  </div>
+  </section>
 
   <script src="app.js"></script>
 </body>

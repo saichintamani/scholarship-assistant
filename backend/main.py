@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from backend.ai.fraud_detector import FraudDetector
 from backend.ai.explanation_agent import ExplanationAgent
