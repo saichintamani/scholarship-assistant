@@ -1,0 +1,58 @@
+# SamvaadAI: Agentic Transformation Plan
+
+This plan details the steps to upgrade SamvaadAI from its current hardcoded prototype state into a true, dynamic Agentic AI Scholarship Decision Engine with a premium, modern frontend.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **LLM Integration:** The project currently has `openai` listed in `requirements.txt`. Do you want me to write the `ExplanationAgent` to actually call the OpenAI API to generate dynamic explanations, or should I continue using rule-based text generation for now? (If yes, you will need an `OPENAI_API_KEY` set in your environment).
+
+## Open Questions
+
+> [!WARNING]
+> **Frontend Stack:** I plan to stick with Vanilla HTML/CSS/JS (as currently used) but apply an aggressive, premium styling overhaul (Glassmorphism, animations, modern layout). If you prefer migrating to a framework like Next.js or React, please let me know now!
+
+## Proposed Changes
+
+### 1. Backend: Dynamic Eligibility Engine
+
+The hardcoded `if category in ["SC", "ST"] and income <= 250000` logic will be entirely removed.
+
+#### [MODIFY] [main.py](file:///c:/Users/saich/samvaadAI/backend/main.py)
+- Load the `scholarships.json` file on startup.
+- Update the `/check-scholarship` route to iterate through all available scholarships in the JSON and check eligibility for each scheme individually.
+- Return a list of *multiple* matched scholarships rather than a single true/false boolean.
+
+#### [MODIFY] [explanation_agent.py](file:///c:/Users/saich/samvaadAI/backend/ai/explanation_agent.py)
+- Update the logic so it dynamically generates explanations based on the specific `scholarships.json` rules that were matched or missed.
+
+### 2. Backend: Persistent Agents
+
+#### [MODIFY] [logger_agent.py](file:///c:/Users/saich/samvaadAI/backend/ai/logger_agent.py)
+- Currently, logs are stored in memory and lost when the server restarts. I will modify the agent to persistently write to local JSON files (e.g., `fraud_logs.json` and `analytics.json`).
+
+### 3. Frontend: Premium Redesign
+
+The current MVP UI will be replaced with a stunning, national-grade interface.
+
+#### [MODIFY] [index.html](file:///c:/Users/saich/samvaadAI/frontend/index.html) & [style.css](file:///c:/Users/saich/samvaadAI/frontend/style.css)
+- Implement a deep, modern aesthetic featuring glassmorphic cards, gradient text, and dynamic hover states.
+- The UI will be rebuilt to display a grid of eligible scholarships rather than a simple text output.
+
+#### [MODIFY] [app.js](file:///c:/Users/saich/samvaadAI/frontend/app.js)
+- Update the payload parser to handle the new backend response format (arrays of eligible scholarships) and dynamically render HTML cards for each match.
+
+### 4. Frontend: The Admin Dashboard
+
+#### [MODIFY] [admin.html](file:///c:/Users/saich/samvaadAI/frontend/admin.html)
+- Currently, `admin.html` exists but we need to ensure it communicates with the existing `/admin/logs` routes.
+- I will build a secure-looking, dark-mode analytics dashboard that visualizes system traffic and flagged fraud attempts.
+
+## Verification Plan
+
+### Automated Tests
+- No automated tests are currently present, but I will manually test the backend using curl commands or Python scripts to ensure `scholarships.json` is accurately filtering users.
+
+### Manual Verification
+- You will need to spin up the FastAPI server (`uvicorn backend.main:app --reload`) and open `index.html` in your browser.
+- Verify that different combinations of category and income accurately return the respective scholarships listed in the JSON file.

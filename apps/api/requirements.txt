@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic
+google-generativeai
+faiss-cpu
+langchain
+APScheduler
+python-jose
+passlib[bcrypt]
+python-multipart
+beautifulsoup4
+requests
