@@ -1,18 +1,21 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  samvaadai:
-    build: .
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile
     ports:
       - "8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - JWT_SECRET=${JWT_SECRET}
       - REDIS_URL=redis://redis:6379/0
     volumes:
-      - ./backend/analytics.json:/app/backend/analytics.json
-      - ./backend/fraud_logs.json:/app/backend/fraud_logs.json
-      - ./backend/scholarships.json:/app/backend/scholarships.json
+      - ./apps/api:/app/apps/api
+      - ./packages/ai-core:/app/packages/ai-core
+      - sqlite_data:/data
+    depends_on:
+      - redis
 
   redis:
     image: redis:alpine
@@ -22,8 +25,10 @@ services:
       - redis_data:/data
 
   celery_worker:
-    build: .
-    command: celery -A backend.services.celery_app worker --loglevel=info
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile
+    command: celery -A apps.api.services.celery_app worker --loglevel=info
     volumes:
       - .:/app
     environment:
