@@ -10,7 +10,7 @@ export default function LandingPage() {
       {/* Sticky Glassmorphism Navbar */}
       <nav className="sticky top-0 z-50 flex justify-between items-center px-10 py-6 border-b border-white/10 bg-[#05060A]/60 backdrop-blur-xl shadow-lg transition-all duration-300">
         <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 font-mono tracking-tight">
-          Atlas Scholarship AI
+          SamvaadAI
         </h1>
         <div className="flex gap-4 items-center">
           <Link href="/support" className="px-3 py-2 text-sm font-semibold text-gray-400 hover:text-white transition">Customer Care</Link>

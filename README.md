@@ -1,100 +1,86 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/NextJS-Dark.svg" width="80" alt="Next.js" />
-  &nbsp;&nbsp;
-  <img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/FastAPI.svg" width="80" alt="FastAPI" />
+  <img src="public/logo.png" alt="SamvaadAI Logo" width="200" height="200" />
   
-  <br/>
+  # SamvaadAI
   
-  <h1>🎓 SamvaadAI <br/> <i>Scholarship Intelligence System</i></h1>
-
-  <p>
-    <strong>A next-generation AI-powered scholarship discovery engine.</strong><br/>
-    <i>Reasoning, ranking, and semantic search to help students find the best funding opportunities.</i>
-  </p>
-
-  <p>
-    <a href="#-core-innovation">Core Innovation</a> •
-    <a href="#-architecture">Architecture</a> •
-    <a href="#-tech-stack">Tech Stack</a> •
-    <a href="#-future-scope">Future Scope</a>
-  </p>
-
-  <p>
-    🌍 <b>Live Demo:</b> <a href="https://web-theta-three-17.vercel.app/">Frontend (Vercel)</a> | 
-    🔌 <b>API:</b> <a href="https://atlas-scholarship-api.onrender.com">Backend (Render)</a>
-  </p>
+  ### Autonomous Scholarship Intelligence Platform
+  
+  [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+  [![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://react.dev/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 </div>
 
----
+<br />
 
-## 🚀 Why this system exists
-
-We're tired of traditional scholarship platforms. They usually suck because they are:
-- 🔍 **Strictly keyword-based** (you miss things if you don't use the exact word)
-- 📋 **Dependent on static, rigid filters**
-- ❌ **Lacking personalization**
-
-**SamvaadAI is different.** It leverages **AI reasoning + embeddings + ranking intelligence** to find what truly fits *you*.
+> **SamvaadAI is a next-generation Scholarship Discovery and Application Engine.** It transitions student funding from simply asking *"What scholarships exist?"* to proactively matching *"Which scholarships are guaranteed for me?"*. Featuring highly interactive user interfaces, detailed profile analysis, and multi-agent reasoning.
 
 ---
 
-## 🧠 Core Innovation
+## 🏗️ 5-Layer Platform Architecture
 
-- **Eligibility is not filtered** — it is logically reasoned by an AI agent reading between the lines.
-- **Scholarships are not searched** — they are retrieved semantically via Vector Embeddings, understanding the *meaning* behind your profile.
-- **Recommendations are not listed** — they are ranked intelligently based on multi-variable metrics.
+Our system is engineered to scale from a simple scholarship search into a full proactive funding engine.
+
+### 1. Student Experience Layer
+- **Interactive Dashboard:** A comprehensive view of matched scholarships, deadlines, and application status.
+- **Cybernetic Analysis UI:** Live matching scores, eligibility breakdown, and real-time AI reasoning.
+
+### 2. AI Agent Layer (Multi-Agent Reasoning)
+- **Scraper & Extraction Agents:** Automates the extraction and parsing of complex scholarship data from multiple sources.
+- **Matching & Eligibility Agents:** Forecasting applicant success rates based on profile matrices.
+- **Application Assistance Agents:** Providing holistic, personalized essay and application guidance.
+
+### 3. Scholarship Intelligence Layer
+- **Opportunity Graph & RAG:** Ensuring high-accuracy, explainable AI matching using vast vector databases.
+- **Evidence & Matching Engines:** Every matched scholarship explicitly shows the *Why?* (e.g., Match Score 92% due to STEM major, high GPA, and first-generation status).
+
+### 4. Data Integration & Processing
+- **Automated Data Pipelines:** Pulling from university boards, federal databases, and private organizations.
+- **Continuous Updating:** Real-time checking of deadline shifts and changing eligibility requirements.
+
+### 5. Infrastructure & Security
+- **Next.js & FastAPI Stack:** High performance serverless deployments across Vercel and Render.
+- **Privacy First:** Secure handling of student academic and financial data.
 
 ---
 
-## 🏗️ Architecture
+## 🚀 Quick Start
 
-```mermaid
-graph LR
-    A[User] -->|Query| B(API Gateway)
-    B --> C{AI Orchestrator}
-    C --> D[RAG System]
-    D --> E[Ranked Scholarships]
+### 1. Clone the repository
+```bash
+git clone https://github.com/saichintamani/SamvaadAI.git
+cd SamvaadAI
 ```
 
-### 🤖 AI Components
+### 2. Start the Frontend (Next.js)
+```bash
+cd apps/web
+npm install
+npm run dev
+```
 
-1. **Eligibility Reasoning Agent**: Uses LLMs to evaluate strict constraints.
-2. **Scholarship Ranking Engine**: Mathematically weighs multiple fit vectors.
-3. **Recommendation Agent**: Formulates a personalized application strategy.
-4. **Deadline Optimization Agent**: Prioritizes workflow urgency.
-
-### 📊 Scoring Model
-
-Your final match score is a weighted blend of:
-- `(Eligibility × 0.40)`
-- `(Deadline × 0.25)`
-- `(Financial Fit × 0.20)`
-- `(User Preference × 0.15)`
-
----
-
-## ⚙️ Tech Stack
-
-We're built on a modern, robust, and scalable stack:
-
-- **Frontend**: Next.js / React / TailwindCSS
-- **API Framework**: FastAPI / Node.js
-- **Intelligence**: OpenAI / Custom LLM APIs
-- **Vector DB**: FAISS / Pinecone
-- **Relational DB**: PostgreSQL / SQLite
-- **Orchestration**: Celery & Redis
+### 3. Start the Backend (FastAPI)
+```bash
+cd apps/api
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn api.main:app --reload
+```
 
 ---
 
-## 🔮 Future Scope
+## 📹 Comprehensive Demo
 
-- [ ] **Fully autonomous scholarship application agent**
-- [ ] **PDF form auto-filler**
-- [ ] **Multi-agent decision system**
-- [ ] **Personalized funding roadmap generator**
+Check out the full journey of our platform, from the landing page, through the AI analysis, to the Customer Care portal!
+
+![Full Demo Video](docs/full_demo.webp)
 
 ---
 
-<div align="center">
-  <p><i>Turning scholarship discovery into an AI decision system, not just a search tool.</i></p>
-</div>
+## 📞 Customer Care & Support
+
+Need help or want to connect? Reach out via our built-in Customer Care Portal, or connect directly:
+- **Email:** saichintamani5@gmail.com
+- **LinkedIn:** [Sai Chintamani](https://linkedin.com/in/saichintamani)

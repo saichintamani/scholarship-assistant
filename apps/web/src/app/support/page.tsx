@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Mail, Github, Linkedin, LifeBuoy } from "lucide-react";
+import { ArrowLeft, Mail, Code2, Link as LinkIcon, LifeBuoy } from "lucide-react";
 
 export default function CustomerCare() {
   return (
@@ -52,7 +52,7 @@ export default function CustomerCare() {
               <div className="glass-card p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-white/5 hover:border-blue-500/30 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white/5 rounded-lg">
-                    <Linkedin className="w-6 h-6 text-blue-400" />
+                    <LinkIcon className="w-6 h-6 text-blue-400" />
                   </div>
                   <div className="text-left">
                     <h3 className="text-white font-semibold text-lg">LinkedIn</h3>
@@ -67,14 +67,14 @@ export default function CustomerCare() {
               <div className="glass-card p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-white/5 hover:border-gray-500/30 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white/5 rounded-lg">
-                    <Github className="w-6 h-6 text-gray-300" />
+                    <Code2 className="w-6 h-6 text-gray-300" />
                   </div>
                   <div className="text-left">
                     <h3 className="text-white font-semibold text-lg">GitHub</h3>
-                    <p className="text-gray-400 text-sm">scholarship-assistant</p>
+                    <p className="text-gray-400 text-sm">SamvaadAI</p>
                   </div>
                 </div>
-                <a href="https://github.com/saichintamani/scholarship-assistant" target="_blank" rel="noopener noreferrer" className="px-6 py-2 border border-gray-500/50 text-gray-300 hover:bg-gray-500/10 rounded-lg font-bold transition w-full md:w-auto">
+                <a href="https://github.com/saichintamani/SamvaadAI" target="_blank" rel="noopener noreferrer" className="px-6 py-2 border border-gray-500/50 text-gray-300 hover:bg-gray-500/10 rounded-lg font-bold transition w-full md:w-auto">
                   View Source
                 </a>
               </div>

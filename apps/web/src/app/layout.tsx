@@ -15,8 +15,8 @@ const firaSans = Fira_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Atlas Scholarship AI",
-  description: "AI Decision Intelligence Platform for Education Funding",
+  title: "SamvaadAI",
+  description: "AI-powered scholarship discovery and application assistant",
 };
 
 export default function RootLayout({
