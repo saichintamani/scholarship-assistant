@@ -6,41 +6,47 @@
 }
 
 body {
-  background-color: #F5F3FF;
-  color: #1E1B4B;
+  background-color: #05060A;
+  color: #FFFFFF;
+  overflow-x: hidden;
 }
 
-.flat-card {
-  background-color: #ffffff;
-  border: 2px solid #E0E7FF;
-  border-radius: 12px;
-  box-shadow: 4px 4px 0px 0px rgba(99,102,241,0.1);
-  transition: all 0.2s ease;
+/* Background animated glow */
+.neural-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 50%),
+              radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.1), transparent 50%);
 }
 
-.flat-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px rgba(99,102,241,0.2);
+.glass-card {
+  background: rgba(13, 17, 23, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
 }
 
-.flat-button {
-  background-color: #6366F1;
+.glass-card:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+.neon-button {
+  background: linear-gradient(135deg, #4F46E5, #9333EA);
   color: #ffffff;
-  border: 2px solid #4F46E5;
-  border-radius: 8px;
-  box-shadow: 2px 2px 0px 0px rgba(30,27,75,0.2);
-  transition: all 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.4);
+  transition: all 0.3s ease;
 }
 
-.flat-button:hover {
-  background-color: #4F46E5;
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0px 0px rgba(30,27,75,0.2);
-}
-
-.flat-button:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0px 0px rgba(30,27,75,0.2);
+.neon-button:hover {
+  box-shadow: 0 0 30px rgba(147, 51, 234, 0.6);
+  transform: translateY(-2px);
 }
 
 @media (prefers-color-scheme: dark) {

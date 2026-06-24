@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fira_Code, Fira_Sans } from "next/font/google";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
 
 const firaCode = Fira_Code({
@@ -29,7 +30,12 @@ export default function RootLayout({
       className={`${firaSans.variable} ${firaCode.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#F5F3FF] text-[#1E1B4B]">{children}</body>
+      <body className="min-h-full flex flex-col font-sans bg-[#05060A] text-white">
+        <div className="neural-bg" />
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
+      </body>
     </html>
   );
 }

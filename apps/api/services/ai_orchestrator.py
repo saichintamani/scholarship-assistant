@@ -1,10 +1,10 @@
-from ai_engine.rag.vector_store import VectorStore
-from ai_engine.scoring.ranker import ScholarshipRanker
-from ai_engine.agents.finder_agent import FinderAgent
-from ai_engine.agents.reasoning_agent import ReasoningAgent
-from ai_engine.agents.strategy_agent import StrategyAgent
-from ai_engine.agents.deadline_agent import DeadlineAgent
-from backend.db import get_db_connection
+from packages.ai_core.rag.vector_store import VectorStore
+from packages.ai_core.scoring.ranker import ScholarshipRanker
+from packages.ai_core.agents.finder_agent import FinderAgent
+from packages.ai_core.agents.reasoning_agent import ReasoningAgent
+from packages.ai_core.agents.strategy_agent import StrategyAgent
+from packages.ai_core.agents.deadline_agent import DeadlineAgent
+from apps.api.db import get_db_connection
 
 class AIOrchestrator:
     def __init__(self):
@@ -24,7 +24,7 @@ class AIOrchestrator:
         scholarships = [dict(r) for r in rows]
         self.vector_store.build_index(scholarships)
 
-    def process_application(self, user_query: str, user_profile: dict) -> dict:
+    def process_application(self, user_query: str, user_profile: dict, language: str = "English") -> dict:
         """
         The massive 4-layer AI workflow.
         """
@@ -39,7 +39,7 @@ class AIOrchestrator:
 
         # 3. Deep Reasoning on top match
         top_match = time_optimized[0]
-        reasoning = self.reasoning.evaluate_constraints(user_profile, top_match)
+        reasoning = self.reasoning.evaluate_constraints(user_profile, top_match, language)
         
         # 4. Strategy Generation
         strategy_plan = self.strategy.suggest_strategy(time_optimized)

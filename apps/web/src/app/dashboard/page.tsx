@@ -1,58 +1,90 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
+import { LogOut, Globe, ExternalLink, Activity } from "lucide-react";
+import { AIBrainOrb } from "@/packages/ui/AIBrainOrb";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState("English");
+  const [category, setCategory] = useState("GENERAL");
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-[150vh] pb-20 text-white relative">
       
+      {/* Floating Particles */}
+      <motion.div animate={{ y: [0, -30, 0], x: [0, 20, 0] }} transition={{ repeat: Infinity, duration: 8 }} className="absolute top-40 left-10 w-64 h-64 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+      <motion.div animate={{ y: [0, 30, 0], x: [0, -20, 0] }} transition={{ repeat: Infinity, duration: 10 }} className="absolute bottom-40 right-10 w-80 h-80 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
+
       {/* HEADER */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center mb-10 border-b-2 border-[#E0E7FF] pb-6"
+        className="sticky top-0 z-50 flex justify-between items-center px-8 py-6 mb-10 border-b border-white/10 bg-[#05060A]/60 backdrop-blur-xl shadow-lg transition-all duration-300 -mx-8"
       >
-        <h1 className="text-3xl font-bold font-mono text-[#1E1B4B]">🎓 Atlas Scholar Engine</h1>
+        <h1 className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">🎓 Atlas Scholar Engine</h1>
         
-        <div className="flex items-center gap-4">
-          <span className="font-bold text-[#4F46E5] bg-[#EEF2FF] px-3 py-1 rounded-full border-2 border-[#E0E7FF] text-sm">Pro Member</span>
-          <Link href="/" className="flat-button px-4 py-2 font-bold flex items-center gap-2">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 glass-card px-3 py-1.5 rounded-full border border-white/10">
+            <Globe className="w-4 h-4 text-cyan-400" />
+            <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-transparent text-sm font-medium outline-none text-gray-200">
+              <option className="bg-gray-900">English</option>
+              <option className="bg-gray-900">Hindi</option>
+              <option className="bg-gray-900">Marathi</option>
+              <option className="bg-gray-900">Telugu</option>
+            </select>
+          </div>
+          <Link href="/" className="neon-button px-4 py-2 font-bold flex items-center gap-2 text-sm">
             <LogOut className="w-4 h-4" /> Disconnect
           </Link>
         </div>
       </motion.div>
 
       {/* HERO SECTION */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10 relative z-10 px-8">
 
         {/* LEFT PANEL */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
-          className="col-span-1 flat-card p-6"
+          className="col-span-1 glass-card p-6 border-indigo-500/20"
         >
-          <h2 className="text-xl font-bold font-mono mb-6 text-[#1E1B4B]">🧠 Multi-Agent Status</h2>
-
-          <div className="flex items-center gap-4 bg-[#F5F3FF] border-2 border-[#E0E7FF] p-4 rounded-xl mb-6">
-            <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="w-4 h-4 rounded-full bg-[#10B981] border-2 border-[#059669]"
-            />
-            <span className="font-bold text-[#10B981] uppercase tracking-wider">Online & Ready</span>
+          <div className="flex items-center gap-4 mb-6">
+            <AIBrainOrb />
+            <h2 className="text-xl font-bold font-mono text-white">Multi-Agent Status</h2>
           </div>
 
-          <p className="text-[#4F46E5] font-medium leading-relaxed">
-            The semantic FAISS orchestrator is active. Enter your credentials to begin deep vector search across 14,000+ verified scholarships.
+          <div className="flex items-center gap-4 bg-indigo-900/30 border border-indigo-500/30 p-4 rounded-xl mb-6 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]"
+            />
+            <span className="font-bold text-cyan-400 uppercase tracking-wider text-sm">Online & Ready</span>
+          </div>
+
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-xs text-gray-400 uppercase tracking-wider mb-2">Applicant Category / Caste</label>
+              <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition appearance-none">
+                <option value="GENERAL">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="MINORITY">Minority</option>
+              </select>
+            </div>
+          </div>
+
+          <p className="text-gray-400 text-sm leading-relaxed mb-6">
+            The semantic FAISS orchestrator will filter 14,000+ verified scholarships explicitly mapping to {category} quotas and translate the strategy to {language}.
           </p>
 
-          <button onClick={() => setLoading(true)} className="flat-button w-full py-3 mt-6 font-bold text-lg">
-            Initialize Engine
+          <button onClick={() => setLoading(!loading)} className="neon-button w-full py-4 font-bold text-lg flex items-center justify-center gap-2 group">
+            {loading ? <Activity className="w-5 h-5 animate-pulse" /> : <Database className="w-5 h-5 group-hover:scale-110 transition-transform" />}
+            {loading ? "Processing..." : "Initialize Engine"}
           </button>
         </motion.div>
 
@@ -60,77 +92,60 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className="col-span-2 flat-card p-8 bg-[#EEF2FF] border-[#C7D2FE]"
+          className="col-span-2 glass-card p-8 border-purple-500/20"
         >
-          <h2 className="text-2xl font-bold font-mono text-[#1E1B4B] mb-2">⚡ Live Intelligence Feed</h2>
-          <p className="text-[#4F46E5] font-medium mb-8">Real-time matching algorithms based on your semantic profile.</p>
+          <h2 className="text-2xl font-bold font-mono text-white mb-2 flex items-center gap-2">
+            <Zap className="w-6 h-6 text-cyan-400" /> Live Intelligence Feed
+          </h2>
+          <p className="text-gray-400 font-medium mb-8">Real-time matching algorithms based on your semantic profile.</p>
 
-          {loading ? (
-            <div className="flex items-center gap-3 text-[#6366F1] font-bold animate-pulse p-4">
-              <div className="w-6 h-6 border-4 border-[#6366F1] border-t-transparent rounded-full animate-spin"></div>
-              Analyzing candidates via RAG...
-            </div>
-          ) : (
-            <motion.div className="space-y-6">
-              {[
-                { name: "NSF Scholarship", match: 98, color: "bg-[#10B981]" },
-                { name: "AI Talent Grant", match: 92, color: "bg-[#6366F1]" },
-                { name: "Edu Future Fund", match: 88, color: "bg-[#F59E0B]" }
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.2 }}
-                  className="p-5 bg-white rounded-xl border-2 border-[#E0E7FF] shadow-sm relative overflow-hidden"
-                >
-                  <div className="flex justify-between font-bold text-[#1E1B4B] mb-3 relative z-10">
-                    <p className="font-mono text-lg">{item.name}</p>
-                    <span className="text-[#10B981]">{item.match}% Match</span>
-                  </div>
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center py-20 text-indigo-400 font-bold">
+                <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
+                <motion.p animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1.5 }}>Translating RAG strategy to {language}...</motion.p>
+              </motion.div>
+            ) : (
+              <motion.div key="results" className="space-y-6">
+                {[
+                  { name: "National Scholarship Portal - Post Matric", match: 98, color: "bg-cyan-400", portal: "https://scholarships.gov.in" },
+                  { name: "Buddy4Study AI Talent Grant", match: 92, color: "bg-indigo-400", portal: "https://buddy4study.com" },
+                  { name: "Edu Future SC/ST Direct Fund", match: 88, color: "bg-purple-400", portal: "https://aicte-india.org" }
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.2 }}
+                    className="p-6 bg-black/40 rounded-xl border border-white/10 shadow-lg relative overflow-hidden group hover:border-indigo-500/50 transition-colors"
+                  >
+                    <div className="flex justify-between items-start font-bold text-white mb-4 relative z-10">
+                      <div>
+                        <p className="font-mono text-lg">{item.name}</p>
+                        <a href={item.portal} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 mt-1">
+                          Apply via {new URL(item.portal).hostname} <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                      <span className="text-cyan-400 bg-cyan-900/30 px-3 py-1 rounded-full border border-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.2)]">{item.match}% Match</span>
+                    </div>
 
-                  <div className="h-2 w-full bg-[#EEF2FF] rounded-full overflow-hidden relative z-10">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${item.match}%` }}
-                      transition={{ duration: 1, delay: i * 0.2 }}
-                      className={`h-full ${item.color} rounded-full`}
-                    />
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
+                    <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden relative z-10 shadow-inner">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${item.match}%` }}
+                        transition={{ duration: 1.5, delay: i * 0.2, ease: "easeOut" }}
+                        className={`h-full ${item.color} rounded-full relative`}
+                      >
+                        <div className="absolute top-0 right-0 bottom-0 w-8 bg-white/30 skew-x-[-20deg] animate-[translate_2s_infinite]"></div>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
-
-      {/* BOTTOM SECTION */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-8 flat-card p-8"
-      >
-        <h2 className="text-xl font-bold font-mono text-[#1E1B4B] mb-6">🧠 AI Reasoning Flow</h2>
-
-        <motion.ul className="grid grid-cols-4 gap-4 text-[#4F46E5] font-medium font-mono text-sm">
-          {[
-            "1. Analyzing GPA Vector...",
-            "2. Matching FAISS Index...",
-            "3. Scanning RAG Database...",
-            "4. Finalizing Weights...",
-          ].map((step, i) => (
-            <motion.li
-              key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.3 }}
-              className="bg-[#EEF2FF] border-2 border-[#E0E7FF] p-4 rounded-xl"
-            >
-              {step}
-            </motion.li>
-          ))}
-        </motion.ul>
-      </motion.div>
     </div>
   );
 }

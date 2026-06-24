@@ -6,7 +6,7 @@ class ReasoningAgent:
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.client = OpenAI(api_key=self.api_key) if self.api_key else None
 
-    def evaluate_constraints(self, user_profile: dict, scholarship: dict) -> str:
+    def evaluate_constraints(self, user_profile: dict, scholarship: dict, language: str = "English") -> str:
         """
         Uses LLM to logically reason if a user strictly meets the constraints of a specific scholarship.
         """
@@ -19,7 +19,11 @@ class ReasoningAgent:
         Scholarship Constraints: {scholarship}
         
         Evaluate logically if this user perfectly matches the scholarship. 
-        Return a short paragraph explaining exactly why or why not they are eligible.
+        Pay special attention to the 'category' or 'caste' requirements (e.g. SC, ST, OBC, General). 
+        If the user's category does not match the scholarship's required category, explicitly state they are ineligible due to caste constraints.
+
+        IMPORTANT: You MUST write your entire response in {language}. Do NOT write in English unless {language} is English.
+        Return a short paragraph explaining exactly why or why not they are eligible in {language}.
         """
 
         try:
