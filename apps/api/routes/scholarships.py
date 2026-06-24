@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from apps.api.services.ai_orchestrator import AIOrchestrator
+from api.services.ai_orchestrator import AIOrchestrator
 
 router = APIRouter()
 orchestrator = AIOrchestrator()

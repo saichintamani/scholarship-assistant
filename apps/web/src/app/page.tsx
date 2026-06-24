@@ -12,7 +12,8 @@ export default function LandingPage() {
         <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 font-mono tracking-tight">
           Atlas Scholarship AI
         </h1>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+          <Link href="/support" className="px-3 py-2 text-sm font-semibold text-gray-400 hover:text-white transition">Customer Care</Link>
           <Link href="/login" className="px-5 py-2.5 font-semibold text-gray-300 hover:text-white transition">Log In</Link>
           <Link href="/login" className="neon-button px-5 py-2.5 font-bold">Get Started</Link>
         </div>

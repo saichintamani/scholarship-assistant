@@ -1,6 +1,6 @@
 import json
 import os
-from backend.db import get_db_connection
+from api.db import get_db_connection
 
 class LoggerAgent:
     def __init__(self):

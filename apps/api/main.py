@@ -9,15 +9,15 @@ from dotenv import load_dotenv
 from typing import Optional
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from backend.db import get_db_connection
-from backend.auth import verify_password, get_password_hash, create_access_token, decode_access_token
-from backend.ai.fraud_detector import FraudDetector
-from backend.ai.explanation_agent import ExplanationAgent
-from backend.ai.logger_agent import LoggerAgent
-from backend.ai.vision_agent import VisionAgent
-from backend.ai.rag_agent import RagAgent
-from backend.scraper import run_automated_scraper
-from backend.routes.scholarships import router as scholarships_router
+from api.db import get_db_connection
+from api.auth import verify_password, get_password_hash, create_access_token, decode_access_token
+from api.ai.fraud_detector import FraudDetector
+from api.ai.explanation_agent import ExplanationAgent
+from api.ai.logger_agent import LoggerAgent
+from api.ai.vision_agent import VisionAgent
+from api.ai.rag_agent import RagAgent
+from api.scraper import run_automated_scraper
+from api.routes.scholarships import router as scholarships_router
 
 load_dotenv()
 

@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from backend.db import get_db_connection
+from api.db import get_db_connection
 import sqlite3
 
 def run_automated_scraper():
