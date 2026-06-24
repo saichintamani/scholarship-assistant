@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SamvaadAI | Admin Command Center</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .admin-container {
       max-width: 1200px;
@@ -108,6 +109,22 @@
       <div id="scholarships-list" class="logs-container" style="max-height: 250px;">Loading...</div>
     </div>
 
+    <!-- Data Visualization Analytics -->
+    <div class="grid-2" style="margin-bottom: 24px;">
+      <div class="panel">
+        <div class="panel-header">
+          <span style="color: var(--primary);">📊</span> Application Status
+        </div>
+        <canvas id="statusChart" height="200"></canvas>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span style="color: var(--error);">📉</span> Fraud by Category
+        </div>
+        <canvas id="fraudChart" height="200"></canvas>
+      </div>
+    </div>
+
     <div class="grid-2">
       <!-- AI Decisions -->
       <div class="panel">
@@ -139,6 +156,8 @@
         const logs = await logsRes.json();
         const frauds = await fraudRes.json();
         const scholarships = await scholarRes.json();
+
+        renderCharts(logs, frauds);
 
         // Render Logs
         const logsDiv = document.getElementById('decision-logs');
@@ -200,6 +219,50 @@
         document.getElementById('fraud-logs').innerHTML = '<p style="color: var(--error);">Backend Offline</p>';
         document.getElementById('scholarships-list').innerHTML = '<p style="color: var(--error);">Backend Offline</p>';
       }
+    }
+
+    let statusChartInstance = null;
+    let fraudChartInstance = null;
+
+    function renderCharts(logs, frauds) {
+      const eligibleCount = logs.filter(l => l.eligible).length;
+      const ineligibleCount = logs.length - eligibleCount;
+      
+      const statusCtx = document.getElementById('statusChart').getContext('2d');
+      if (statusChartInstance) statusChartInstance.destroy();
+      statusChartInstance = new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Eligible', 'Not Eligible'],
+          datasets: [{
+            data: [eligibleCount, ineligibleCount],
+            backgroundColor: ['#10B981', '#EF4444'],
+            borderWidth: 0
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      const fraudCategories = {};
+      frauds.forEach(f => {
+        fraudCategories[f.category] = (fraudCategories[f.category] || 0) + 1;
+      });
+
+      const fraudCtx = document.getElementById('fraudChart').getContext('2d');
+      if (fraudChartInstance) fraudChartInstance.destroy();
+      fraudChartInstance = new Chart(fraudCtx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(fraudCategories),
+          datasets: [{
+            label: 'Fraud Alerts',
+            data: Object.values(fraudCategories),
+            backgroundColor: '#F97316',
+            borderRadius: 4
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
     }
 
     async function addScholarship() {

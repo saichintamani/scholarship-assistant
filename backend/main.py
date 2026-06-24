@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import json
 import os
 from dotenv import load_dotenv
+from backend.db import get_db_connection
+
+load_dotenv()
 
 load_dotenv()
 
@@ -86,27 +90,36 @@ class ScholarshipEntry(BaseModel):
     max_income: int
     portal: str
 
-SCHOLARSHIPS_FILE = os.path.join(os.path.dirname(__file__), "scholarships.json")
-
 @app.get("/admin/scholarships")
 def get_scholarships():
-    if not os.path.exists(SCHOLARSHIPS_FILE):
-        return []
-    with open(SCHOLARSHIPS_FILE, "r") as f:
-        return json.load(f)
+    conn = get_db_connection()
+    rows = conn.execute("SELECT * FROM scholarships").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
 
 @app.post("/admin/scholarships")
 def add_scholarship(entry: ScholarshipEntry):
-    scholarships = get_scholarships()
-    scholarships.append(entry.dict())
-    with open(SCHOLARSHIPS_FILE, "w") as f:
-        json.dump(scholarships, f, indent=4)
+    conn = get_db_connection()
+    try:
+        conn.execute(
+            "INSERT INTO scholarships (name, category, max_income, portal) VALUES (?, ?, ?, ?)",
+            (entry.name, entry.category, entry.max_income, entry.portal)
+        )
+        conn.commit()
+    except sqlite3.IntegrityError:
+        pass # Already exists
+    finally:
+        conn.close()
     return {"message": "Scholarship added successfully"}
 
 @app.delete("/admin/scholarships/{name}")
 def delete_scholarship(name: str):
-    scholarships = get_scholarships()
-    scholarships = [s for s in scholarships if s["name"] != name]
-    with open(SCHOLARSHIPS_FILE, "w") as f:
-        json.dump(scholarships, f, indent=4)
+    conn = get_db_connection()
+    conn.execute("DELETE FROM scholarships WHERE name = ?", (name,))
+    conn.commit()
+    conn.close()
     return {"message": "Scholarship deleted successfully"}
+
+# Serve frontend directly from FastAPI
+frontend_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
+app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
