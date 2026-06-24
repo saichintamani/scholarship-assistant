@@ -14,6 +14,8 @@ from backend.auth import verify_password, get_password_hash, create_access_token
 from backend.ai.fraud_detector import FraudDetector
 from backend.ai.explanation_agent import ExplanationAgent
 from backend.ai.logger_agent import LoggerAgent
+from backend.ai.vision_agent import VisionAgent
+from backend.ai.rag_agent import RagAgent
 from backend.scraper import run_automated_scraper
 
 load_dotenv()
@@ -36,6 +38,8 @@ scheduler.start()
 fraud_agent = FraudDetector()
 explanation_agent = ExplanationAgent()
 logger_agent = LoggerAgent()
+vision_agent = VisionAgent()
+rag_agent = RagAgent()
 
 # ---------- AUTHENTICATION ----------
 
@@ -154,6 +158,67 @@ def get_applications(token: str):
     rows = conn.execute("SELECT * FROM saved_applications WHERE user_id = ?", (user_id,)).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+class ProfileRequest(BaseModel):
+    token: str
+    category: str
+    income: int
+
+@app.post("/profile")
+def update_profile(req: ProfileRequest):
+    user_id = get_current_user(req.token)
+    conn = get_db_connection()
+    conn.execute("INSERT OR REPLACE INTO user_profiles (user_id, category, income) VALUES (?, ?, ?)", 
+                 (user_id, req.category, req.income))
+    conn.commit()
+    conn.close()
+    return {"message": "Profile updated successfully"}
+
+@app.get("/alerts")
+def get_alerts(token: str):
+    user_id = get_current_user(token)
+    conn = get_db_connection()
+    rows = conn.execute("SELECT * FROM alerts WHERE user_id = ? ORDER BY id DESC", (user_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+# ---------- ADVANCED AI CAPABILITIES ----------
+
+class VerifyDocumentRequest(BaseModel):
+    token: str
+    image_base64: str
+
+@app.post("/verify-document")
+def verify_document(req: VerifyDocumentRequest):
+    user_id = get_current_user(req.token)
+    income = vision_agent.extract_income(req.image_base64)
+    
+    if income == -1:
+        return {"verified": False, "message": "Could not read income from document. Please try a clearer image."}
+        
+    # Auto-update profile and verify user
+    conn = get_db_connection()
+    conn.execute("UPDATE users SET is_verified = TRUE WHERE id = ?", (user_id,))
+    # Assuming category is not verified via income cert, we just update income
+    conn.execute("INSERT OR REPLACE INTO user_profiles (user_id, category, income) VALUES (?, (SELECT category FROM user_profiles WHERE user_id = ?), ?)", 
+                 (user_id, user_id, income))
+    conn.commit()
+    conn.close()
+    
+    return {"verified": True, "message": f"Successfully verified income: ₹{income}"}
+
+class ChatRequest(BaseModel):
+    message: str
+
+@app.post("/chat")
+def rag_chat(req: ChatRequest):
+    conn = get_db_connection()
+    rows = conn.execute("SELECT * FROM scholarships").fetchall()
+    conn.close()
+    scholarships = [dict(r) for r in rows]
+    
+    response = rag_agent.chat(req.message, scholarships)
+    return {"response": response}
 
 # ---------- ADMIN APIs ----------
 

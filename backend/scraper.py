@@ -21,14 +21,22 @@ def run_automated_scraper():
     added = 0
     for s in scraped_data:
         try:
-            conn.execute(
+            cursor = conn.execute(
                 "INSERT INTO scholarships (name, category, max_income, portal) VALUES (?, ?, ?, ?)",
                 (s["name"], s["category"], s["max_income"], s["portal"])
             )
             added += 1
+            
+            # Autonomous Matching & Alerts
+            profiles = conn.execute("SELECT user_id, category, income FROM user_profiles").fetchall()
+            for profile in profiles:
+                if profile["category"] == s["category"] and profile["income"] <= s["max_income"]:
+                    msg = f"New Match! {s['name']} is now available for your profile."
+                    conn.execute("INSERT INTO alerts (user_id, message) VALUES (?, ?)", (profile["user_id"], msg))
+                    
         except sqlite3.IntegrityError:
             pass # Already exists
             
     conn.commit()
     conn.close()
-    print(f"[Scraper] Successfully added {added} new scholarships to the database.")
+    print(f"[Scraper] Added {added} new scholarships and dispatched alerts.")

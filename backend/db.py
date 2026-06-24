@@ -48,7 +48,30 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE,
         hashed_password TEXT,
+        is_verified BOOLEAN DEFAULT FALSE,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    ''')
+
+    # User Profiles Table (for background matching)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS user_profiles (
+        user_id INTEGER PRIMARY KEY,
+        category TEXT,
+        income INTEGER,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+    ''')
+
+    # Alerts Table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS alerts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        message TEXT,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id)
     )
     ''')
 
