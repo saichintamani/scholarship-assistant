@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  samvaadai:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend/analytics.json:/app/backend/analytics.json
+      - ./backend/fraud_logs.json:/app/backend/fraud_logs.json
+      - ./backend/scholarships.json:/app/backend/scholarships.json

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Post Matric Scholarship (SC)",
+    "category": "SC",
+    "max_income": 250000,
+    "portal": "https://scholarships.gov.in"
+  },
+  {
+    "name": "Merit-cum-Means Minority",
+    "category": "MINORITY",
+    "max_income": 200000,
+    "portal": "https://scholarships.gov.in"
+  },
+  {
+    "name": "Central Sector Scheme",
+    "category": "GENERAL",
+    "max_income": 400000,
+    "portal": "https://scholarships.gov.in"
+  }
+]

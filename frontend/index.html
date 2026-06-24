@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SamvaadAI | National Agentic Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="background-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="container">
+    <div class="glass-card">
+      <div class="header">
+        <h1>🎓 Samvaad<span class="gradient-text">AI</span></h1>
+        <p class="subtitle">National Level Agentic Decision Engine</p>
+      </div>
+
+      <div class="form-group">
+        <label>Category</label>
+        <select id="category">
+          <option value="SC">Scheduled Caste (SC)</option>
+          <option value="ST">Scheduled Tribe (ST)</option>
+          <option value="OBC">Other Backward Class (OBC)</option>
+          <option value="MINORITY">Minority</option>
+          <option value="GENERAL">General</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Annual Income (₹)</label>
+        <input type="number" id="income" placeholder="e.g. 230000" min="0" value="200000">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label>Passed Last Exam?</label>
+          <select id="passed">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div class="form-group half">
+          <label>Number of Attempts</label>
+          <input type="number" id="attempts" placeholder="e.g. 1" min="1" value="1">
+        </div>
+      </div>
+
+      <button onclick="checkScholarship()" class="action-btn">
+        <span class="btn-text">🚀 Check Eligibility</span>
+        <div class="loader" id="btnLoader"></div>
+      </button>
+
+      <div id="result" class="result-container hidden"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
