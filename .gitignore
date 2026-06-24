@@ -4,3 +4,5 @@ __pycache__/
 .env
 analytics.json
 fraud_logs.json
+*.db
+samvaadai.db
