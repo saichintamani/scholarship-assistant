@@ -1,7 +1,9 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "samvaadai.db")
+# Use an environment variable for the data directory if it exists, otherwise use local directory
+DATA_DIR = os.environ.get("DATA_DIR", os.path.dirname(__file__))
+DB_PATH = os.path.join(DATA_DIR, "samvaadai.db")
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
