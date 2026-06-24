@@ -1,75 +1,162 @@
-async function checkEligibility() {
-  const btn = document.getElementById('submit-btn');
-  const resultDiv = document.getElementById('result');
-  
-  // Visual Loading State
-  btn.innerHTML = 'Analyzing...';
-  btn.disabled = true;
-  btn.style.opacity = '0.7';
-  resultDiv.style.display = 'none';
+let attempts = 0;
+let isSignUpMode = false;
+const API_BASE = 'http://127.0.0.1:8000';
 
-  const payload = {
-    category: document.getElementById('category').value,
-    income: parseInt(document.getElementById('income').value) || 0,
-    passed: document.getElementById('passed').value === 'true',
-    attempts: parseInt(document.getElementById('attempts').value) || 1
-  };
-
-  try {
-    const response = await fetch('http://127.0.0.1:8000/check-eligibility', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    
-    const data = await response.json();
-    
-    // Reset Button
-    btn.innerHTML = 'Check My Eligibility';
-    btn.disabled = false;
-    btn.style.opacity = '1';
-
-    // Render Result
-    resultDiv.style.display = 'block';
-    
-    if (data.fraud_alert) {
-      resultDiv.style.borderLeftColor = 'var(--error)';
-      resultDiv.style.backgroundColor = 'var(--error-bg)';
-      resultDiv.innerHTML = `
-        <h4 style="color: var(--error-text); margin-bottom: 8px;">Security Alert</h4>
-        <p style="color: var(--error-text); font-weight: 500;">Your application has been flagged for manual review due to suspicious activity.</p>
-      `;
-      return;
-    }
-
-    if (data.eligible) {
-      resultDiv.style.borderLeftColor = 'var(--success)';
-      resultDiv.style.backgroundColor = 'var(--success-bg)';
-      resultDiv.innerHTML = `
-        <h4 style="color: var(--success-text); margin-bottom: 8px;">Congratulations! You are Eligible.</h4>
-        <p style="color: var(--success-text);">${data.explanation}</p>
-        <div style="margin-top: 16px;">
-          ${data.scholarships.map(s => `
-            <a href="${s.portal}" target="_blank" class="btn btn-accent" style="margin-bottom: 8px;">Apply for ${s.name} →</a>
-          `).join('')}
-        </div>
-      `;
-    } else {
-      resultDiv.style.borderLeftColor = 'var(--error)';
-      resultDiv.style.backgroundColor = 'var(--bg-main)';
-      resultDiv.innerHTML = `
-        <h4 style="color: var(--error); margin-bottom: 8px;">Not Eligible</h4>
-        <p style="color: var(--text-main);">${data.explanation}</p>
-      `;
-    }
-
-  } catch (error) {
-    btn.innerHTML = 'Check My Eligibility';
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    
-    resultDiv.style.display = 'block';
-    resultDiv.style.borderLeftColor = 'var(--error)';
-    resultDiv.innerHTML = `<h4 style="color: var(--error);">Error: Cannot reach the server. Make sure the backend is running.</h4>`;
-  }
+// --- AUTHENTICATION ---
+function toggleAuthMode() {
+    isSignUpMode = !isSignUpMode;
+    document.getElementById('auth-title').innerText = isSignUpMode ? "Sign Up for SamvaadAI" : "Login to SamvaadAI";
+    document.getElementById('auth-submit-btn').innerText = isSignUpMode ? "Register" : "Login";
 }
+
+async function submitAuth() {
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    const endpoint = isSignUpMode ? '/register' : '/login';
+
+    try {
+        const res = await fetch(API_BASE + endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            if (isSignUpMode) {
+                alert("Registration successful! Please login.");
+                toggleAuthMode();
+            } else {
+                localStorage.setItem('samvaad_token', data.access_token);
+                document.getElementById('auth-modal').style.display = 'none';
+                checkAuthStatus();
+            }
+        } else {
+            alert(data.detail || "Authentication failed");
+        }
+    } catch (e) {
+        alert("Server error during authentication");
+    }
+}
+
+function logout() {
+    localStorage.removeItem('samvaad_token');
+    checkAuthStatus();
+}
+
+async function loadDashboard() {
+    const token = localStorage.getItem('samvaad_token');
+    if (!token) return;
+
+    const res = await fetch(`${API_BASE}/applications?token=${token}`);
+    if (res.ok) {
+        const apps = await res.json();
+        const listDiv = document.getElementById('saved-list');
+        if (apps.length === 0) {
+            listDiv.innerHTML = "<p>No saved applications yet.</p>";
+        } else {
+            listDiv.innerHTML = apps.map(app => `
+                <div class="list-item">
+                    <strong>${app.scholarship_name}</strong>
+                    <span class="badge badge-success">${app.status}</span>
+                </div>
+            `).join('');
+        }
+    }
+}
+
+function checkAuthStatus() {
+    const token = localStorage.getItem('samvaad_token');
+    if (token) {
+        document.getElementById('login-btn').style.display = 'none';
+        document.getElementById('logout-btn').style.display = 'inline-block';
+        document.getElementById('dashboard').style.display = 'block';
+        loadDashboard();
+    } else {
+        document.getElementById('login-btn').style.display = 'inline-block';
+        document.getElementById('logout-btn').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'none';
+    }
+}
+
+// --- ELIGIBILITY ENGINE ---
+document.getElementById('eligibility-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    attempts++;
+
+    const category = document.getElementById('category').value;
+    const income = document.getElementById('income').value;
+    const passed = document.getElementById('passed').checked;
+    const language = document.getElementById('language').value;
+
+    const payload = {
+        category,
+        income: parseInt(income),
+        passed,
+        attempts,
+        language
+    };
+
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '<p>AI is analyzing your profile...</p>';
+    resultsDiv.style.display = 'block';
+
+    try {
+        const res = await fetch(API_BASE + '/check-scholarship', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        let html = '';
+        if (data.eligible) {
+            html += `<h3 style="color: var(--success); margin-bottom: 8px;">Eligible! 🎉</h3>`;
+        } else if (data.reason === 'Fraud detected') {
+            html += `<h3 style="color: var(--error); margin-bottom: 8px;">Security Alert 🚨</h3>`;
+        } else {
+            html += `<h3 style="color: var(--error); margin-bottom: 8px;">Not Eligible</h3>`;
+        }
+
+        html += `<p style="margin-bottom: 16px;"><strong>AI Assessment:</strong> ${data.explanation}</p>`;
+
+        if (data.scholarships.length > 0) {
+            html += `<div style="display: flex; flex-direction: column; gap: 12px;">`;
+            data.scholarships.forEach(s => {
+                html += `
+                    <div class="list-item" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${s.name}</strong> <span class="badge badge-primary">${s.category}</span>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Max Income: ₹${s.max_income} | <a href="${s.portal}" target="_blank" style="color: var(--primary);">Portal →</a></div>
+                        </div>
+                        <button onclick="saveApplication('${s.name}')" class="btn btn-outline" style="width: auto; font-size: 0.8rem; padding: 4px 12px;">Save</button>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        }
+        resultsDiv.innerHTML = html;
+    } catch (err) {
+        resultsDiv.innerHTML = '<p style="color: var(--error);">Error connecting to AI Engine.</p>';
+    }
+});
+
+async function saveApplication(name) {
+    const token = localStorage.getItem('samvaad_token');
+    if (!token) {
+        alert("You must be logged in to save applications!");
+        document.getElementById('auth-modal').style.display = 'flex';
+        return;
+    }
+    
+    await fetch(API_BASE + '/applications/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scholarship_name: name, token })
+    });
+    alert("Application saved to dashboard!");
+    loadDashboard();
+}
+
+// Initialize
+checkAuthStatus();

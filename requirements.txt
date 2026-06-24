@@ -3,3 +3,8 @@ uvicorn
 pydantic
 python-dotenv
 openai
+passlib[bcrypt]
+python-jose
+beautifulsoup4
+requests
+apscheduler

@@ -1,19 +1,22 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import json
 import os
+import sqlite3
 from dotenv import load_dotenv
+from typing import Optional
+from apscheduler.schedulers.background import BackgroundScheduler
+
 from backend.db import get_db_connection
-
-load_dotenv()
-
-load_dotenv()
-
+from backend.auth import verify_password, get_password_hash, create_access_token, decode_access_token
 from backend.ai.fraud_detector import FraudDetector
 from backend.ai.explanation_agent import ExplanationAgent
 from backend.ai.logger_agent import LoggerAgent
+from backend.scraper import run_automated_scraper
+
+load_dotenv()
 
 app = FastAPI(title="SamvaadAI – National Level Agentic System")
 
@@ -24,15 +27,64 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Start Background Scheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(run_automated_scraper, 'interval', days=7) # Run every week
+scheduler.start()
+
+# Initialize Agents
+fraud_agent = FraudDetector()
+explanation_agent = ExplanationAgent()
+logger_agent = LoggerAgent()
+
+# ---------- AUTHENTICATION ----------
+
+class UserCreate(BaseModel):
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+@app.post("/register")
+def register(user: UserCreate):
+    conn = get_db_connection()
+    hashed_pw = get_password_hash(user.password)
+    try:
+        conn.execute("INSERT INTO users (email, hashed_password) VALUES (?, ?)", (user.email, hashed_pw))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise HTTPException(status_code=400, detail="Email already registered")
+    conn.close()
+    return {"message": "User registered successfully"}
+
+@app.post("/login")
+def login(user: UserLogin):
+    conn = get_db_connection()
+    db_user = conn.execute("SELECT * FROM users WHERE email = ?", (user.email,)).fetchone()
+    conn.close()
+    if not db_user or not verify_password(user.password, db_user["hashed_password"]):
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    
+    access_token = create_access_token(data={"sub": str(db_user["id"])})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+def get_current_user(token: str):
+    user_id = decode_access_token(token)
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return user_id
+
+# ---------- SCHOLARSHIP ELIGIBILITY ----------
+
 class ScholarshipRequest(BaseModel):
     category: str
     income: int
     passed: bool
     attempts: int
-
-fraud_agent = FraudDetector()
-explanation_agent = ExplanationAgent()
-logger_agent = LoggerAgent()
+    language: str = "English"
 
 @app.post("/check-scholarship")
 def check_scholarship(data: ScholarshipRequest):
@@ -47,8 +99,11 @@ def check_scholarship(data: ScholarshipRequest):
             "scholarships": []
         }
 
-    with open(os.path.join(os.path.dirname(__file__), "scholarships.json"), "r") as f:
-        scholarships = json.load(f)
+    # Fetch from SQLite instead of JSON
+    conn = get_db_connection()
+    rows = conn.execute("SELECT * FROM scholarships").fetchall()
+    conn.close()
+    scholarships = [dict(r) for r in rows]
 
     eligible_scholarships = []
 
@@ -57,7 +112,7 @@ def check_scholarship(data: ScholarshipRequest):
             if data.category == scholarship["category"] and data.income <= scholarship["max_income"]:
                 eligible_scholarships.append(scholarship)
 
-    explanation = explanation_agent.generate_explanation(data_dict, eligible_scholarships)
+    explanation = explanation_agent.generate_explanation(data_dict, eligible_scholarships, data.language)
     logger_agent.log_decision(data_dict, len(eligible_scholarships) > 0, explanation)
 
     if eligible_scholarships:
@@ -73,6 +128,32 @@ def check_scholarship(data: ScholarshipRequest):
         "explanation": explanation,
         "scholarships": []
     }
+
+# ---------- USER DASHBOARD ----------
+
+class SaveApplicationRequest(BaseModel):
+    scholarship_name: str
+    token: str
+
+@app.post("/applications/save")
+def save_application(req: SaveApplicationRequest):
+    user_id = get_current_user(req.token)
+    conn = get_db_connection()
+    conn.execute(
+        "INSERT INTO saved_applications (user_id, scholarship_name) VALUES (?, ?)",
+        (user_id, req.scholarship_name)
+    )
+    conn.commit()
+    conn.close()
+    return {"message": "Application saved successfully"}
+
+@app.get("/applications")
+def get_applications(token: str):
+    user_id = get_current_user(token)
+    conn = get_db_connection()
+    rows = conn.execute("SELECT * FROM saved_applications WHERE user_id = ?", (user_id,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
 
 # ---------- ADMIN APIs ----------
 

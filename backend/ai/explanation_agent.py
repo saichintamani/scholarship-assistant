@@ -7,10 +7,23 @@ class ExplanationAgent:
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.client = OpenAI(api_key=self.api_key) if self.api_key else None
 
-    def generate_explanation(self, data: dict, eligible_scholarships: list) -> str:
+    def generate_explanation(self, user_data: dict, eligible_scholarships: list, language: str = "English") -> str:
         if self.client:
             try:
-                prompt = f"A student applied for scholarships with this profile: {json.dumps(data)}. They matched with these scholarships: {json.dumps(eligible_scholarships)}. Write a highly empathetic and concise 2-sentence explanation of why they got these results. Do not output anything else."
+                prompt = f"""
+        You are an empathetic, national-level scholarship advisor for Indian students.
+        The user is a student trying to find scholarships. They provided the following details:
+        - Category: {user_data['category']}
+        - Annual Family Income: ₹{user_data['income']}
+        - Passed Last Exam: {'Yes' if user_data['passed'] else 'No'}
+        - Application Attempts: {user_data['attempts']}
+        
+        Based on our database, they are eligible for the following scholarships:
+        {[s['name'] for s in eligible_scholarships]} if the list is empty, they are not eligible for any.
+        
+        Provide a concise, empathetic explanation (2-3 sentences max) to the student.
+        CRITICAL: You MUST write your response entirely in the {language} language.
+        """
                 response = self.client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[{"role": "user", "content": prompt}],

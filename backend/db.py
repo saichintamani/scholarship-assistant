@@ -42,6 +42,28 @@ def init_db():
     )
     ''')
     
+    # Users Table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE,
+        hashed_password TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    ''')
+
+    # Saved Applications Table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS saved_applications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        scholarship_name TEXT,
+        status TEXT DEFAULT 'Saved',
+        saved_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+    ''')
+    
     conn.commit()
     conn.close()
 
