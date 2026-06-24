@@ -3,13 +3,35 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import Link from "next/link";
-import { LogOut, Globe, ExternalLink, Activity } from "lucide-react";
-import { AIBrainOrb } from "@/packages/ui/AIBrainOrb";
+import { LogOut, Globe, ExternalLink, Activity, Database, Zap } from "lucide-react";
+import { AIBrainOrb } from "@/components/AIBrainOrb";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState("English");
   const [category, setCategory] = useState("GENERAL");
+  const [results, setResults] = useState<any>(null);
+
+  const handleInitialize = async () => {
+    setLoading(true);
+    setResults(null);
+    try {
+      const response = await fetch("http://localhost:8000/api/v1/scholarships/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: `I am a student looking for scholarships. My caste category is ${category}.`,
+          profile: { category: category },
+          language: language
+        })
+      });
+      const data = await response.json();
+      setResults(data);
+    } catch (error) {
+      console.error("Failed to fetch from intelligence engine:", error);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-[150vh] pb-20 text-white relative">
@@ -82,7 +104,7 @@ export default function Dashboard() {
             The semantic FAISS orchestrator will filter 14,000+ verified scholarships explicitly mapping to {category} quotas and translate the strategy to {language}.
           </p>
 
-          <button onClick={() => setLoading(!loading)} className="neon-button w-full py-4 font-bold text-lg flex items-center justify-center gap-2 group">
+          <button onClick={handleInitialize} className="neon-button w-full py-4 font-bold text-lg flex items-center justify-center gap-2 group">
             {loading ? <Activity className="w-5 h-5 animate-pulse" /> : <Database className="w-5 h-5 group-hover:scale-110 transition-transform" />}
             {loading ? "Processing..." : "Initialize Engine"}
           </button>
@@ -105,13 +127,16 @@ export default function Dashboard() {
                 <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
                 <motion.p animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1.5 }}>Translating RAG strategy to {language}...</motion.p>
               </motion.div>
-            ) : (
+            ) : results ? (
               <motion.div key="results" className="space-y-6">
-                {[
-                  { name: "National Scholarship Portal - Post Matric", match: 98, color: "bg-cyan-400", portal: "https://scholarships.gov.in" },
-                  { name: "Buddy4Study AI Talent Grant", match: 92, color: "bg-indigo-400", portal: "https://buddy4study.com" },
-                  { name: "Edu Future SC/ST Direct Fund", match: 88, color: "bg-purple-400", portal: "https://aicte-india.org" }
-                ].map((item, i) => (
+                
+                {/* Reasoning Output from Agent */}
+                <div className="p-6 bg-indigo-900/20 border border-indigo-500/30 rounded-xl mb-8">
+                  <h3 className="font-mono text-cyan-400 mb-2 flex items-center gap-2"><AIBrainOrb /> Intelligence Reasoning</h3>
+                  <p className="text-gray-300 leading-relaxed text-sm italic">{results.reasoning}</p>
+                </div>
+
+                {results.all_matches?.map((item: any, i: number) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, x: 20 }}
@@ -122,19 +147,21 @@ export default function Dashboard() {
                     <div className="flex justify-between items-start font-bold text-white mb-4 relative z-10">
                       <div>
                         <p className="font-mono text-lg">{item.name}</p>
-                        <a href={item.portal} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 mt-1">
-                          Apply via {new URL(item.portal).hostname} <ExternalLink className="w-3 h-3" />
+                        <a href={item.portal || "https://scholarships.gov.in"} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 mt-1">
+                          Apply via {item.portal ? new URL(item.portal).hostname : "scholarships.gov.in"} <ExternalLink className="w-3 h-3" />
                         </a>
                       </div>
-                      <span className="text-cyan-400 bg-cyan-900/30 px-3 py-1 rounded-full border border-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.2)]">{item.match}% Match</span>
+                      <span className="text-cyan-400 bg-cyan-900/30 px-3 py-1 rounded-full border border-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+                        {item.match_score ? Math.round(item.match_score * 100) : 98}% Match
+                      </span>
                     </div>
 
                     <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden relative z-10 shadow-inner">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${item.match}%` }}
+                        animate={{ width: `${item.match_score ? Math.round(item.match_score * 100) : 98}%` }}
                         transition={{ duration: 1.5, delay: i * 0.2, ease: "easeOut" }}
-                        className={`h-full ${item.color} rounded-full relative`}
+                        className={`h-full bg-cyan-400 rounded-full relative`}
                       >
                         <div className="absolute top-0 right-0 bottom-0 w-8 bg-white/30 skew-x-[-20deg] animate-[translate_2s_infinite]"></div>
                       </motion.div>
@@ -142,6 +169,8 @@ export default function Dashboard() {
                   </motion.div>
                 ))}
               </motion.div>
+            ) : (
+              <div className="py-20 text-center text-gray-500 font-mono">System standing by. Waiting for initialization...</div>
             )}
           </AnimatePresence>
         </motion.div>
