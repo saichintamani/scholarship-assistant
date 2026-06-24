@@ -1,25 +1,46 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-fira-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-fira-code), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 body {
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  overflow-x: hidden;
+  background-color: #F5F3FF;
+  color: #1E1B4B;
 }
 
-.glow {
-  filter: blur(60px);
-  opacity: 0.3;
+.flat-card {
+  background-color: #ffffff;
+  border: 2px solid #E0E7FF;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px 0px rgba(99,102,241,0.1);
+  transition: all 0.2s ease;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.flat-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px rgba(99,102,241,0.2);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.flat-button {
+  background-color: #6366F1;
+  color: #ffffff;
+  border: 2px solid #4F46E5;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px 0px rgba(30,27,75,0.2);
+  transition: all 0.15s ease;
+}
+
+.flat-button:hover {
+  background-color: #4F46E5;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px rgba(30,27,75,0.2);
+}
+
+.flat-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px rgba(30,27,75,0.2);
 }
 
 @media (prefers-color-scheme: dark) {

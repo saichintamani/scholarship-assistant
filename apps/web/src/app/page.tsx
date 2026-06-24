@@ -1,117 +1,66 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import Link from "next/link";
+import { ArrowRight, ShieldCheck, Zap, Database } from "lucide-react";
 
-export default function Home() {
-  const [loading, setLoading] = useState(false);
-
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#05060a] text-white px-10 py-8">
+    <div className="min-h-screen">
+      {/* Navbar */}
+      <nav className="flex justify-between items-center px-10 py-6 border-b-2 border-[#E0E7FF] bg-white">
+        <h1 className="text-2xl font-bold text-[#6366F1] font-mono tracking-tight">Atlas Scholarship AI</h1>
+        <div className="flex gap-4">
+          <Link href="/login" className="px-5 py-2.5 font-semibold text-[#1E1B4B] hover:text-[#6366F1] transition">Log In</Link>
+          <Link href="/login" className="flat-button px-5 py-2.5 font-bold">Get Started</Link>
+        </div>
+      </nav>
 
-      {/* HEADER */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center"
-      >
-        <h1 className="text-2xl font-bold">🎓 Atlas Scholarship AI</h1>
+      {/* Hero */}
+      <main className="max-w-6xl mx-auto px-6 py-20 text-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold text-[#10B981] bg-[#D1FAE5] border-2 border-[#10B981] rounded-full uppercase tracking-wider">
+            Now in Public Beta
+          </span>
+          <h2 className="text-5xl md:text-7xl font-bold text-[#1E1B4B] tracking-tight mb-8 leading-tight">
+            Education Funding, <br/>
+            <span className="text-[#6366F1]">Solved by AI.</span>
+          </h2>
+          <p className="text-xl text-[#4F46E5] mb-12 max-w-2xl mx-auto font-medium">
+            Stop searching blindly. Our Multi-Agent AI system uses semantic reasoning to instantly match you with the scholarships you actually qualify for.
+          </p>
+          <Link href="/login" className="flat-button inline-flex items-center gap-2 px-8 py-4 text-lg font-bold">
+            Launch AI Intelligence <ArrowRight className="w-5 h-5" />
+          </Link>
+        </motion.div>
 
-        <button className="px-4 py-2 bg-blue-600 rounded-xl hover:bg-blue-500">
-          Connect AI
-        </button>
-      </motion.div>
-
-      {/* HERO SECTION */}
-      <div className="grid grid-cols-3 gap-6 mt-10">
-
-        {/* LEFT PANEL */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="col-span-1 bg-[#0d1117] p-5 rounded-2xl border border-gray-800"
-        >
-          <h2 className="text-lg font-semibold">🧠 AI Brain Status</h2>
-
-          <motion.div
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="mt-4 text-green-400"
-          >
-            ● ACTIVE
+        {/* Feature Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mt-24 text-left">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flat-card p-8">
+            <div className="w-12 h-12 bg-[#EEF2FF] border-2 border-[#6366F1] rounded-xl flex items-center justify-center mb-6">
+              <Zap className="w-6 h-6 text-[#6366F1]" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 font-mono">Semantic Matching</h3>
+            <p className="text-[#4F46E5]">Using FAISS Vector Search to understand your exact profile intent instead of simple keyword matching.</p>
           </motion.div>
 
-          <p className="text-sm text-gray-400 mt-4">
-            Real-time scholarship intelligence engine running...
-          </p>
-        </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flat-card p-8">
+            <div className="w-12 h-12 bg-[#EEF2FF] border-2 border-[#6366F1] rounded-xl flex items-center justify-center mb-6">
+              <Database className="w-6 h-6 text-[#6366F1]" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 font-mono">Live Intelligence</h3>
+            <p className="text-[#4F46E5]">Automated scraping nodes pull the latest scholarships daily into our vector database.</p>
+          </motion.div>
 
-        {/* CENTER PANEL */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="col-span-2 bg-gradient-to-br from-[#0d1117] to-[#111827] p-6 rounded-2xl border border-gray-800"
-        >
-          <h2 className="text-xl font-semibold">⚡ Live Intelligence Feed</h2>
-
-          {loading ? (
-            <p className="text-blue-400 mt-4">Analyzing candidates...</p>
-          ) : (
-            <motion.div className="mt-6 space-y-4">
-
-              {["NSF Scholarship", "AI Talent Grant", "Edu Future Fund"].map(
-                (item, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.2 }}
-                    className="p-4 bg-black/40 rounded-xl border border-gray-700"
-                  >
-                    <div className="flex justify-between">
-                      <p>{item}</p>
-                      <span className="text-green-400">{98 - i * 3}%</span>
-                    </div>
-
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${98 - i * 3}%` }}
-                      className="h-1 bg-blue-500 mt-2 rounded-full"
-                    />
-                  </motion.div>
-                )
-              )}
-            </motion.div>
-          )}
-        </motion.div>
-      </div>
-
-      {/* BOTTOM SECTION */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-10 bg-[#0d1117] p-6 rounded-2xl border border-gray-800"
-      >
-        <h2 className="text-lg font-semibold">🧠 AI Reasoning Flow</h2>
-
-        <motion.ul className="mt-4 space-y-2 text-gray-300">
-          {[
-            "Analyzing GPA...",
-            "Matching financial profile...",
-            "Scanning scholarship database...",
-            "Ranking results...",
-          ].map((step, i) => (
-            <motion.li
-              key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.3 }}
-            >
-              {step}
-            </motion.li>
-          ))}
-        </motion.ul>
-      </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flat-card p-8">
+            <div className="w-12 h-12 bg-[#EEF2FF] border-2 border-[#6366F1] rounded-xl flex items-center justify-center mb-6">
+              <ShieldCheck className="w-6 h-6 text-[#6366F1]" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 font-mono">Fraud Protection</h3>
+            <p className="text-[#4F46E5]">Our AI Verification Agent cross-references domains to protect students from scam portals.</p>
+          </motion.div>
+        </div>
+      </main>
     </div>
   );
 }
